@@ -1,0 +1,143 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-primary: #0A0F1A;
+  --bg-secondary: #121826;
+  --bg-tertiary: #1C2436;
+  --accent-blue: #2563EB;
+  --accent-blue-hover: #1D4ED8;
+  --accent-blue-light: rgba(37, 99, 235, 0.15);
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --border-color: #1E293B;
+  --font-body: 'Inter', sans-serif;
+  --font-heading: 'Outfit', sans-serif;
+}
+
+.mirror {
+  transform: scaleX(-1);
+}
+
+@keyframes music-bar-1 {
+  0%, 100% { height: 4px; }
+  50% { height: 12px; }
+}
+
+@keyframes music-bar-2 {
+  0%, 100% { height: 2px; }
+  50% { height: 8px; }
+}
+
+@keyframes music-bar-3 {
+  0%, 100% { height: 3px; }
+  50% { height: 10px; }
+}
+
+.animate-music-bar-1 { animation: music-bar-1 0.6s infinite ease-in-out; }
+.animate-music-bar-2 { animation: music-bar-2 0.8s infinite ease-in-out; }
+.animate-music-bar-3 { animation: music-bar-3 0.7s infinite ease-in-out; }
+
+@layer base {
+  * {
+    @apply border-border-primary;
+    scrollbar-width: thin;
+    scrollbar-color: #1e293b transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 10px;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: #2563eb;
+  }
+
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  #root {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  #root::-webkit-scrollbar {
+    display: none;
+  }
+
+  body {
+    @apply bg-bg-primary text-text-primary font-inter antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-outfit text-text-primary;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-md font-medium transition-all duration-200 cursor-pointer font-inter border-none;
+  }
+
+  .btn-primary {
+    @apply bg-accent-blue text-white hover:bg-blue-700;
+  }
+
+  .btn-secondary {
+    @apply bg-transparent border border-border-primary text-text-primary hover:bg-bg-tertiary;
+  }
+
+  .card {
+    @apply bg-bg-secondary border border-border-primary rounded-xl p-6;
+  }
+
+  /* Independent scrolling utilities */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 10px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #2563eb;
+  }
+}
