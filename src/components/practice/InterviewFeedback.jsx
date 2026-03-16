@@ -33,7 +33,7 @@ const InterviewFeedback = () => {
     useEffect(() => {
         const fetchFeedback = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/api/interview/feedback/${id}`, {
+                const response = await fetch(`${import.meta.env.VITE_BACKEND_URI}/api/interview/feedback/${id}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

@@ -350,7 +350,8 @@ export const CallProvider = ({ children }) => {
             setCallStatus('receiving');
         };
 
-        const handleCallAccepted = async (signal) => {
+        const handleCallAccepted = async (data) => {
+            const signal = data.signal;
             console.log('📞 Call accepted by remote');
             ringtoneSound.pause();
             dialingSound.pause();
@@ -386,7 +387,8 @@ export const CallProvider = ({ children }) => {
             endCall(true);
         };
 
-        const handleIceCandidate = async (candidate) => {
+        const handleIceCandidate = async (data) => {
+            const candidate = data.candidate;
             if (peerConnectionRef.current && candidate) {
                 try {
                     await peerConnectionRef.current.addIceCandidate(new RTCIceCandidate(candidate));

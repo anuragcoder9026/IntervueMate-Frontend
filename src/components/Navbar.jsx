@@ -284,7 +284,7 @@ const Navbar = ({ isGroupMode, groupName, groupId = '1' }) => {
 
 
             {/* Mobile Bottom Navigation Gear */}
-            <div className="hidden lg:hidden fixed bottom-0 left-0 right-0 bg-bg-secondary border-t border-border-primary z-[70] px-3 py-2 flex items-center justify-between shadow-[0_-4px_20px_rgba(0,0,0,0.4)]">
+            <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-bg-secondary border-t border-border-primary z-[70] px-3 py-2 flex items-center justify-between shadow-[0_-4px_20px_rgba(0,0,0,0.4)]">
                 {navItems.map((item) => {
                     if (item.name === 'Practice') {
                         return (
