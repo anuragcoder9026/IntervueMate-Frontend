@@ -14,7 +14,7 @@ const LikesModal = ({ isOpen, onClose, postId }) => {
             const fetchLikes = async () => {
                 try {
                     setLoading(true);
-                    const res = await axios.get(`http://localhost:5000/api/posts/${postId}/likes`, {
+                    const res = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/posts/${postId}/likes`, {
                         withCredentials: true
                     });
                     if (res.data.success) {

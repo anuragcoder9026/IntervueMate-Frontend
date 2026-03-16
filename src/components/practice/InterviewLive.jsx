@@ -371,7 +371,7 @@ const InterviewLive = ({ onEnd, interviewId, initialQuestion, config }) => {
         setChatHistory(prev => [...prev, { role: 'user', text: textToSubmit }]);
 
         try {
-            const response = await fetch('http://localhost:5000/api/interview/next', {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URI}/api/interview/next`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',

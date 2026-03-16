@@ -11,7 +11,7 @@ const InterviewHistory = () => {
     useEffect(() => {
         const fetchHistory = async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/interview/history', {
+                const response = await fetch(`${import.meta.env.VITE_BACKEND_URI}/api/interview/history`, {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${localStorage.getItem('token')}`

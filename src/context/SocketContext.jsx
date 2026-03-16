@@ -6,7 +6,7 @@ const SocketContext = createContext(null);
 
 export const useSocket = () => useContext(SocketContext);
 
-const SOCKET_URL = 'http://localhost:5000';
+const SOCKET_URL = `${import.meta.env.VITE_BACKEND_URI}`;
 
 export const SocketProvider = ({ children }) => {
     const { user } = useSelector((state) => state.auth);

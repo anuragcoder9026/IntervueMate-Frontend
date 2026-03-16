@@ -70,7 +70,7 @@ const SignupPage = () => {
     };
 
     const handleGoogleLogin = () => {
-        window.location.href = 'http://localhost:5000/api/auth/google';
+        window.location.href = `${import.meta.env.VITE_BACKEND_URI}/api/auth/google`;
     };
 
     return (

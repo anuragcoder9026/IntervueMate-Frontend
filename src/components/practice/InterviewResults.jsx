@@ -28,7 +28,7 @@ const InterviewResults = ({ onRetake, interviewId }) => {
             }
 
             try {
-                const response = await fetch('http://localhost:5000/api/interview/finish', {
+                const response = await fetch(`${import.meta.env.VITE_BACKEND_URI}/api/interview/finish`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
