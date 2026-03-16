@@ -7,7 +7,10 @@ const GoogleOneTap = () => {
     const initializedRef = useRef(false);
 
     useEffect(() => {
-        // If user is already logged in, cancel any existing prompts
+        let isMounted = true;
+        let interval;
+
+        // If user is already logged in, no need to show prompt
         if (user && window.google) {
             window.google.accounts.id.cancel();
             initializedRef.current = false;
@@ -15,7 +18,7 @@ const GoogleOneTap = () => {
         }
 
         const initializeOneTap = () => {
-            if (!user && window.google && !initializedRef.current) {
+            if (!user && window.google && !initializedRef.current && isMounted) {
                 const handleCallback = async (response) => {
                     try {
                         const res = await api.post('/auth/google/onetap', {
@@ -32,36 +35,52 @@ const GoogleOneTap = () => {
                     }
                 };
 
-                window.google.accounts.id.initialize({
-                    client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-                    callback: handleCallback,
-                    cancel_on_tap_outside: false,
-                    auto_select: false
-                });
+                try {
+                    window.google.accounts.id.initialize({
+                        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+                        callback: handleCallback,
+                        cancel_on_tap_outside: false,
+                        use_fedcm_for_prompt: true, // Opt-in to FedCM specifically to fix migration warning
+                        auto_select: false
+                    });
 
-                window.google.accounts.id.prompt((notification) => {
-                    if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-                        console.log('One Tap not displayed or skipped:', notification.getNotDisplayedReason() || notification.getSkippedReason());
-                        initializedRef.current = false;
-                    }
-                });
-                
-                initializedRef.current = true;
+                    window.google.accounts.id.prompt((notification) => {
+                        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                            console.log('One Tap not displayed or skipped:', notification.getNotDisplayedReason() || notification.getSkippedReason());
+                        }
+                    });
+                    
+                    initializedRef.current = true;
+                } catch (error) {
+                    console.error("Failed to initialize Google One Tap", error);
+                    initializedRef.current = false;
+                }
             }
         };
 
         // If google script is already loaded
         if (window.google) {
-            initializeOneTap();
+            // Small delay to ensure any previous prompt is cancelled/cleared from DOM
+            setTimeout(() => {
+                if (isMounted) initializeOneTap();
+            }, 100);
         } else {
-            const interval = setInterval(() => {
-                if (window.google) {
+            interval = setInterval(() => {
+                if (window.google && isMounted) {
                     initializeOneTap();
                     clearInterval(interval);
                 }
             }, 1000);
-            return () => clearInterval(interval);
         }
+
+        return () => {
+            isMounted = false;
+            if (interval) clearInterval(interval);
+            if (window.google) {
+                window.google.accounts.id.cancel();
+            }
+            initializedRef.current = false;
+        };
     }, [user]);
 
     return null;
