@@ -1,19 +1,21 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import api from '../utils/api';
 
 const GoogleOneTap = () => {
     const { user } = useSelector((state) => state.auth);
+    const initializedRef = useRef(false);
 
     useEffect(() => {
         // If user is already logged in, cancel any existing prompts
         if (user && window.google) {
             window.google.accounts.id.cancel();
+            initializedRef.current = false;
             return;
         }
 
         const initializeOneTap = () => {
-            if (!user && window.google) {
+            if (!user && window.google && !initializedRef.current) {
                 const handleCallback = async (response) => {
                     try {
                         const res = await api.post('/auth/google/onetap', {
@@ -26,6 +28,7 @@ const GoogleOneTap = () => {
                         }
                     } catch (error) {
                         console.error('One Tap Error:', error);
+                        initializedRef.current = false;
                     }
                 };
 
@@ -36,7 +39,14 @@ const GoogleOneTap = () => {
                     auto_select: false
                 });
 
-                window.google.accounts.id.prompt();
+                window.google.accounts.id.prompt((notification) => {
+                    if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                        console.log('One Tap not displayed or skipped:', notification.getNotDisplayedReason() || notification.getSkippedReason());
+                        initializedRef.current = false;
+                    }
+                });
+                
+                initializedRef.current = true;
             }
         };
 
