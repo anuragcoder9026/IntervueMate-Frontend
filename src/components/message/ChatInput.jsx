@@ -93,7 +93,7 @@ const ChatInput = ({
     }, []);
 
     return (
-        <div className="px-4 py-3 bg-[#111827] border-t border-[#1E293B] relative shrink-0">
+        <div className="px-2 sm:px-4 py-3 bg-[#111827] border-t border-[#1E293B] relative shrink-0">
             {/* Selected files preview */}
             {selectedFiles.length > 0 && !isRecording && (
                 <div className="flex flex-wrap gap-2 mb-3 bg-black/20 p-2 rounded-lg border border-white/5 max-h-[140px] overflow-y-auto">
@@ -175,9 +175,9 @@ const ChatInput = ({
                 </div>
             )}
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2">
                 {isRecording ? (
-                    <div className="flex-1 flex items-center bg-[#1C2436] rounded-full px-4 py-2 border border-accent-blue/30 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                    <div className="flex-1 flex items-center bg-[#1C2436] rounded-full px-2 sm:px-4 py-2 border border-accent-blue/30 animate-in fade-in slide-in-from-bottom-2 duration-300 min-w-0">
                         <div className="flex items-center gap-3 flex-1">
                             <div className="relative flex items-center">
                                 <div className="w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse mr-2" />
@@ -210,7 +210,7 @@ const ChatInput = ({
                     </div>
                 ) : (
                     <>
-                        <div className="flex-1 flex items-center bg-[#1C2436] rounded-full border border-white/5 focus-within:border-accent-blue/20 transition-all px-1.5">
+                        <div className="flex-1 flex items-center bg-[#1C2436] rounded-full border border-white/5 focus-within:border-accent-blue/20 transition-all px-1 sm:px-1.5 min-w-0">
                             <button onClick={() => imageInputRef.current?.click()} className="p-2 text-text-secondary hover:text-white rounded-full hover:bg-white/5 transition-all shrink-0 relative group">
                                 <Plus size={20} strokeWidth={2} />
                                 <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black/80 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Images</span>
@@ -233,11 +233,11 @@ const ChatInput = ({
                             </button>
                         </div>
                         {messageInput.trim() || selectedFiles.length > 0 ? (
-                            <button onClick={() => handleSend()} className="p-3 bg-accent-blue hover:bg-accent-blue-hover text-white rounded-full transition-all shadow-lg shadow-accent-blue/25 shrink-0">
+                            <button onClick={() => handleSend()} className="p-2 sm:p-3 bg-accent-blue hover:bg-accent-blue-hover text-white rounded-full transition-all shadow-lg shadow-accent-blue/25 shrink-0">
                                 <Send size={20} />
                             </button>
                         ) : (
-                            <button onClick={startRecording} className="p-3 bg-[#1C2436] text-text-secondary hover:text-white rounded-full border border-white/5 hover:border-white/10 transition-all shrink-0 group">
+                            <button onClick={startRecording} className="p-2 sm:p-3 bg-[#1C2436] text-text-secondary hover:text-white rounded-full border border-white/5 hover:border-white/10 transition-all shrink-0 group">
                                 <Mic size={20} className="group-hover:text-accent-blue transition-colors" />
                             </button>
                         )}

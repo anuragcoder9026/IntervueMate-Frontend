@@ -51,68 +51,73 @@ const ChatHeader = ({ otherParticipant, isOtherOnline, isOtherTyping, setIsMobil
     };
 
     return (
-        <div className="h-[60px] px-3 md:px-5 flex items-center justify-between bg-[#111827] border-b border-[#1E293B] shrink-0">
-            <div className="flex items-center gap-3 min-w-0">
+        <div className="h-[60px] w-full px-1.5 sm:px-4 flex items-center justify-between [@media(max-width:405px)]:justify-start [@media(max-width:415px)]:gap-2 bg-[#111827] border-b border-[#1E293B] shrink-0 relative z-[60]">
+            {/* Left Section: Back, Avatar, Name - Flexible width with truncation */}
+            <div className="flex items-center gap-2 sm:gap-3 flex-initial min-w-0 mr-2">
                 <button
-                    className="md:hidden p-1.5 mr-0.5 text-text-secondary hover:text-white hover:bg-white/5 rounded-full transition-colors"
+                    className="md:hidden p-1 text-text-secondary hover:text-white hover:bg-white/5 rounded-full transition-colors shrink-0"
                     onClick={() => setIsMobileChatOpen(false)}
                 >
-                    <ChevronLeft size={22} />
+                    <ChevronLeft size={20} className="sm:w-[22px] sm:h-[22px]" />
                 </button>
                 <div className="relative shrink-0">
                     <img
                         src={otherParticipant?.avatar || `https://ui-avatars.com/api/?name=${otherParticipant?.name || 'U'}&background=random`}
-                        className="w-10 h-10 rounded-full object-cover"
+                        className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover border border-white/5"
                         alt={otherParticipant?.name}
                     />
-                    {isOtherOnline && <div className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-[#111827]" />}
+                    {isOtherOnline && <div className="absolute bottom-0 right-0 w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-emerald-500 border-2 border-[#111827]" />}
                 </div>
-                <div className="flex flex-col min-w-0">
-                    <span className="text-[15px] font-semibold text-white leading-tight truncate">{otherParticipant?.name || 'Unknown'}</span>
-                    <span className="text-[11px] text-text-secondary leading-tight mt-0.5 truncate">
+                <div className="flex flex-col min-w-0 ml-0.5">
+                    <span className="text-xs sm:text-[15px] font-semibold text-white leading-tight truncate">
+                        {otherParticipant?.name || 'Unknown'}
+                    </span>
+                    <span className="text-[9px] sm:text-[11px] text-text-secondary leading-tight mt-0.5 truncate uppercase tracking-tight">
                         {isOtherTyping ? (
                             <span className="text-emerald-400 italic">typing...</span>
                         ) : isOtherOnline ? (
                             <span className="text-emerald-400">online</span>
                         ) : otherParticipant?.lastSeen ? (
-                            `Last seen ${formatLastSeen(otherParticipant.lastSeen)}`
+                            `seen ${formatLastSeen(otherParticipant.lastSeen)}`
                         ) : (
                             'offline'
                         )}
                     </span>
                 </div>
             </div>
-            <div className="flex items-center gap-1 text-text-secondary shrink-0">
+
+            {/* Right Section: Action Icons - Ensured they don't hide or shrink */}
+            <div className="flex items-center justify-end gap-3.5 sm:gap-1 text-text-secondary shrink-0 ml-auto [@media(max-width:415px)]:ml-0">
                 <button
                     onClick={isBlocked ? undefined : () => startCall('video')}
-                    className={`p-2 rounded-lg transition-all ${isBlocked ? 'opacity-50 cursor-not-allowed' : 'hover:text-white hover:bg-white/5'}`}
+                    className={`p-1.5 sm:p-2 rounded-lg transition-all shrink-0 ${isBlocked ? 'opacity-50 cursor-not-allowed' : 'hover:text-white hover:bg-white/5'}`}
                     disabled={isBlocked}
                     title={isBlocked ? "Cannot call blocked user" : "Start Video Call"}
                 >
-                    <Video size={20} />
+                    <Video size={16}/>
                 </button>
                 <button
                     onClick={isBlocked ? undefined : () => startCall('voice')}
-                    className={`p-2 rounded-lg transition-all ${isBlocked ? 'opacity-50 cursor-not-allowed text-red-400/50' : 'hover:text-white hover:bg-white/5'}`}
+                    className={`p-1.5 sm:p-2 rounded-lg transition-all shrink-0 ${isBlocked ? 'opacity-50 cursor-not-allowed text-red-100/50' : 'hover:text-white hover:bg-white/5'}`}
                     disabled={isBlocked}
                     title={isBlocked ? "Cannot call blocked user" : "Start Voice Call"}
                 >
-                    <Phone size={20} />
+                    <Phone size={16} />
                 </button>
-                <button className="p-2 hover:text-white hover:bg-white/5 rounded-lg transition-all"><Search size={20} /></button>
+                
+                <button className="p-1.5 sm:p-2 hover:text-white hover:bg-white/5 rounded-lg transition-all hidden sm:flex shrink-0">
+                    <Search size={16} />
+                </button>
 
-                <div className="relative" ref={menuRef}>
+                <div className="relative shrink-0 flex items-center" ref={menuRef}>
                     <button
                         onClick={() => setShowMenu(!showMenu)}
-                        className="p-2 hover:text-white hover:bg-white/5 rounded-lg transition-all"
+                        className="p-1.5 sm:p-2 hover:text-white hover:bg-white/5 rounded-lg transition-all shrink-0"
                     >
-                        <MoreVertical size={20} />
+                        <MoreVertical size={16} />
                     </button>
                     {showMenu && (
-                        <div
-                            className="absolute top-full right-0 mt-2 w-48 bg-[#1e293b] border border-[#334155] rounded-xl shadow-xl z-50 py-1 overflow-hidden"
-                            style={{ animation: 'fadeIn 0.15s ease-out' }}
-                        >
+                        <div className="absolute top-full right-0 mt-2 w-48 bg-[#1e293b] border border-[#334155] rounded-xl shadow-xl z-50 py-1 overflow-hidden animate-in fade-in zoom-in duration-150">
                             <button
                                 onClick={toggleSound}
                                 className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-text-secondary hover:text-white hover:bg-white/5 transition-colors text-left"

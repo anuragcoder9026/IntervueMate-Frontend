@@ -154,7 +154,6 @@ export const addReply = createAsyncThunk(
         }
     }
 );
-
 // Repost a post
 export const repostPost = createAsyncThunk(
     'post/repost',
@@ -169,6 +168,34 @@ export const repostPost = createAsyncThunk(
     }
 );
 
+// Toggle save post
+export const toggleSavePost = createAsyncThunk(
+    'post/toggleSave',
+    async (postId, thunkAPI) => {
+        try {
+            const response = await api.put(`/posts/${postId}/save`);
+            return { postId, isSaved: response.data.isSaved };
+        } catch (error) {
+            const message = error.response?.data?.error || 'Failed to save post';
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
+
+// Get saved posts
+export const getSavedPosts = createAsyncThunk(
+    'post/getSaved',
+    async (_, thunkAPI) => {
+        try {
+            const response = await api.get('/posts/saved');
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.error || 'Failed to fetch saved posts';
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
+
 const initialState = {
     posts: [],
     isError: false,
@@ -178,6 +205,7 @@ const initialState = {
     isCreated: false,
     message: '',
     currentPost: null,
+    savedPosts: [],
 };
 
 export const postSlice = createSlice({
@@ -409,6 +437,33 @@ export const postSlice = createSlice({
             })
             .addCase(repostPost.rejected, (state, action) => {
                 state.isCreating = false;
+                state.isError = true;
+                state.message = action.payload;
+            })
+            // Toggle save post
+            .addCase(toggleSavePost.fulfilled, (state, action) => {
+                const { postId, isSaved } = action.payload;
+                state.posts.forEach(p => {
+                    if (p._id === postId || p.originalPostId === postId) {
+                        p.isSaved = isSaved;
+                    }
+                });
+                if (state.currentPost && (state.currentPost._id === postId || state.currentPost.originalPostId === postId)) {
+                    state.currentPost.isSaved = isSaved;
+                }
+                state.isSuccess = true;
+                state.message = isSaved ? 'Post saved for later!' : 'Removed from saved items';
+            })
+            // Get saved posts
+            .addCase(getSavedPosts.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(getSavedPosts.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.savedPosts = action.payload.data;
+            })
+            .addCase(getSavedPosts.rejected, (state, action) => {
+                state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload;
             });

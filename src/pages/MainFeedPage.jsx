@@ -114,17 +114,7 @@ const MainFeedPage = () => {
                             </div>
                         </div>
 
-                        {/* Sort By */}
-                        <div className="flex items-center justify-between py-1 px-1">
-                            <div className="flex-1 h-px bg-border-primary/60 mt-1"></div>
-                            <div className="flex items-center gap-1.5 ml-4">
-                                <span className="text-xs text-text-secondary">Sort by:</span>
-                                <button className="flex items-center gap-1 text-xs font-bold text-white hover:text-accent-blue transition-colors">
-                                    Recent <ChevronDown size={14} />
-                                </button>
-                            </div>
-                        </div>
-
+                    
                         {/* Feed Posts */}
                         <div className="space-y-6">
                             {isLoading && posts.length === 0 ? (

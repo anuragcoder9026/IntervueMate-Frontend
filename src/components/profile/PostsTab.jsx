@@ -1,33 +1,62 @@
-import React from 'react';
-import { ThumbsUp, MessageSquare } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
+import api from '../../utils/api';
+import ProfilePostCard from './ProfilePostCard';
+import { Loader2, Newspaper } from 'lucide-react';
 
-const PostsTab = () => {
+const PostsTab = ({ user }) => {
+    const [posts, setPosts] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchUserPosts = async () => {
+            if (!user?._id) return;
+            setIsLoading(true);
+            try {
+                const response = await api.get(`/users/${user._id}/posts`);
+                if (response.data.success) {
+                    setPosts(response.data.data);
+                }
+            } catch (err) {
+                console.error('Error fetching user posts:', err);
+                toast.error('Failed to fetch posts');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchUserPosts();
+    }, [user]);
+
+    if (isLoading) {
+        return (
+            <div className="bg-bg-secondary border border-border-primary rounded-xl p-10 flex flex-col items-center justify-center shadow-sm">
+                <Loader2 size={32} className="text-accent-blue animate-spin mb-4" />
+                <p className="text-text-secondary text-sm font-medium">Loading activity...</p>
+            </div>
+        );
+    }
+
     return (
         <div className="bg-bg-secondary border border-border-primary rounded-xl p-5 sm:p-8 shadow-sm">
-            <h2 className="text-base font-bold text-white mb-6">Recent Posts</h2>
-            <div className="space-y-6">
-                <div className="flex gap-4 items-start">
-                    <div className="flex-1">
-                        <p className="text-xs text-text-secondary mb-2">Posted 2 days ago</p>
-                        <p className="text-sm text-white mb-3 leading-relaxed">Just completed a mock interview for System Design focusing on a rate limiter. The feedback was super helpful! Highly recommend practicing consistently here.</p>
-                        <div className="flex gap-4 text-xs font-bold text-text-secondary">
-                            <span className="flex items-center gap-1.5 hover:text-white cursor-pointer transition-colors"><ThumbsUp size={14} /> 45</span>
-                            <span className="flex items-center gap-1.5 hover:text-white cursor-pointer transition-colors"><MessageSquare size={14} /> 12</span>
-                        </div>
-                    </div>
+            <h2 className="text-base font-bold text-white mb-6">Activity</h2>
+            
+            {posts.length > 0 ? (
+                <div className="flex flex-col gap-5">
+                    {posts.map((post) => (
+                        <ProfilePostCard key={post._id} post={post} />
+                    ))}
                 </div>
-                <div className="h-px bg-border-primary/50"></div>
-                <div className="flex gap-4 items-start">
-                    <div className="flex-1">
-                        <p className="text-xs text-text-secondary mb-2">Posted 1 week ago</p>
-                        <p className="text-sm text-white mb-3 leading-relaxed">Anyone preparing for Google L5 backend roles? Let's connect and do some mock interviews next week.</p>
-                        <div className="flex gap-4 text-xs font-bold text-text-secondary">
-                            <span className="flex items-center gap-1.5 hover:text-white cursor-pointer transition-colors"><ThumbsUp size={14} /> 89</span>
-                            <span className="flex items-center gap-1.5 hover:text-white cursor-pointer transition-colors"><MessageSquare size={14} /> 34</span>
-                        </div>
-                    </div>
+            ) : (
+                <div className="text-center py-20 bg-bg-primary/20 rounded-xl border border-dashed border-border-primary">
+                    <Newspaper size={48} className="mx-auto text-text-secondary/20 mb-4" />
+                    <h3 className="text-white font-bold mb-1">No activity yet</h3>
+                    <p className="text-text-secondary text-sm max-w-xs mx-auto">
+                        This user hasn't shared any posts or reposts yet.
+                    </p>
                 </div>
-            </div>
+            )}
         </div>
     );
 };

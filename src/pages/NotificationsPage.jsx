@@ -1,91 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import NotificationSidebar from '../components/notifications/NotificationSidebar';
 import NotificationCard from '../components/notifications/NotificationCard';
-import { Check, ChevronDown } from 'lucide-react';
+import { Check, ChevronDown, BellOff } from 'lucide-react';
+import { fetchNotifications, markAllNotificationsRead } from '../store/notificationSlice';
 
 const NotificationsPage = () => {
-    // Mock Data mimicking the image exactly
-    const [notifications, setNotifications] = useState([
-        {
-            id: 1,
-            type: 'social_grouped',
-            isUnread: true,
-            title: 'Connection Requests',
-            message: <><strong className="text-white font-semibold">Alex Morgan</strong> and 2 others want to connect with you.</>,
-            time: '10m ago',
-            additionalUsersCount: 2,
-            section: 'TODAY'
-        },
-        {
-            id: 2,
-            type: 'social_single',
-            isUnread: true,
-            title: 'Felix Johnson',
-            roleText: 'Software Engineer at TechCorp',
-            userName: 'Felix',
-            message: 'Sent you a connection request. "Hi, I saw your recent project on System Design and would love to connect!"',
-            time: '25m ago',
-            section: 'TODAY',
-            userAvatar: 'https://api.dicebear.com/7.x/notionists/svg?seed=Felix&backgroundColor=f97316'
-        },
-        {
-            id: 3,
-            type: 'message',
-            isUnread: false,
-            title: 'New Message from Sarah',
-            message: '"Hey! Are we still on for the mock interview prep tonight at 8 PM?"',
-            time: '42m ago',
-            section: 'TODAY'
-        },
-        {
-            id: 4,
-            type: 'achievement',
-            isUnread: false,
-            title: 'New Rank Achieved!',
-            message: <>Congratulations! You are now in the top <strong className="text-orange-500">5%</strong> at <strong className="text-white">NIT Jalandhar</strong>.</>,
-            time: '2h ago',
-            section: 'TODAY'
-        },
-        {
-            id: 5,
-            type: 'ai_feedback',
-            isUnread: false,
-            title: 'AI Interview Feedback Ready',
-            message: <>Your mock interview analysis for '<strong className="text-white">System Design - Scalability</strong>' is complete. 3 key improvements found.</>,
-            time: '3h ago',
-            section: 'TODAY'
-        },
-        {
-            id: 6,
-            type: 'group_invite',
-            isUnread: false,
-            title: 'Invite: "FAANG Prep 2024"',
-            badge: 'Group',
-            userName: 'Sarah',
-            message: <><strong className="text-white font-semibold">Sarah Jenkins</strong> invited you. "We're focusing on DP this week."</>,
-            time: '1d ago',
-            section: 'EARLIER',
-            userAvatar: 'https://api.dicebear.com/7.x/notionists/svg?seed=Sarah&backgroundColor=10b981'
-        },
-        {
-            id: 7,
-            type: 'reminder',
-            isUnread: false,
-            title: 'Reminder: Mock Interview',
-            message: 'Scheduled mock interview for "Frontend Architecture" at 10:00 AM.',
-            time: '1d ago',
-            section: 'EARLIER'
-        }
-    ]);
+    const dispatch = useDispatch();
+    const { notifications, loading, error } = useSelector((state) => state.notifications);
+    const [activeFilter, setActiveFilter] = useState('all');
 
-    const markAllAsRead = () => {
-        setNotifications(prev => prev.map(n => ({ ...n, isUnread: false })));
+    useEffect(() => {
+        // Fetch notifications based on active filter
+        const category = activeFilter === 'all' ? null : activeFilter;
+        dispatch(fetchNotifications(category));
+    }, [dispatch, activeFilter]);
+
+    const handleMarkAllAsRead = () => {
+        dispatch(markAllNotificationsRead());
     };
 
-    const todayItems = notifications.filter(n => n.section === 'TODAY');
-    const earlierItems = notifications.filter(n => n.section === 'EARLIER');
+    const isToday = (date) => {
+        const d = new Date(date);
+        const now = new Date();
+        return d.getDate() === now.getDate() &&
+               d.getMonth() === now.getMonth() &&
+               d.getFullYear() === now.getFullYear();
+    };
+
+    const todayItems = notifications.filter(n => isToday(n.createdAt));
+    const earlierItems = notifications.filter(n => !isToday(n.createdAt));
 
     return (
         <div className="min-h-screen bg-[#0A0F1A] text-text-primary font-inter">
@@ -95,7 +41,10 @@ const NotificationsPage = () => {
 
                 {/* Left Sidebar Filters */}
                 <aside className="w-full lg:w-[260px] shrink-0 sticky top-[64px] lg:top-[88px] z-40">
-                    <NotificationSidebar />
+                    <NotificationSidebar 
+                        activeFilter={activeFilter} 
+                        onFilterChange={setActiveFilter} 
+                    />
                 </aside>
 
                 {/* Main Content Area */}
@@ -104,10 +53,14 @@ const NotificationsPage = () => {
                     <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
                         <div>
                             <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-2">Notifications</h1>
-                            <p className="text-[#a3aed0] text-sm">Stay updated with your interview progress and network activity</p>
+                            <p className="text-[#a3aed0] text-sm italic">
+                                {activeFilter === 'all' ? 'All Activity' : 
+                                 activeFilter === 'social' ? 'Social Connections' :
+                                 activeFilter === 'groups' ? 'Group Activities' : 'Event Updates'}
+                            </p>
                         </div>
                         <button
-                            onClick={markAllAsRead}
+                            onClick={handleMarkAllAsRead}
                             className="flex items-center gap-1.5 text-accent-blue hover:text-white transition-colors text-[13px] font-bold pb-1 sm:pb-0"
                         >
                             <Check size={16} strokeWidth={2.5} />
@@ -115,33 +68,54 @@ const NotificationsPage = () => {
                         </button>
                     </div>
 
-                    {/* TODAY Section */}
-                    {todayItems.length > 0 && (
-                        <div className="mb-10">
-                            <span className="text-[11px] font-black uppercase tracking-widest text-[#64748b] mb-4 block pl-2">TODAY</span>
-                            <div className="flex flex-col gap-0">
-                                {todayItems.map(item => <NotificationCard key={item.id} data={item} />)}
-                            </div>
+                    {loading && notifications.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center py-20 opacity-50">
+                            <div className="w-12 h-12 border-4 border-accent-blue/30 border-t-accent-blue rounded-full animate-spin mb-4" />
+                            <p className="text-[#a3aed0] font-bold">Fetching updates...</p>
                         </div>
-                    )}
-
-                    {/* EARLIER Section */}
-                    {earlierItems.length > 0 && (
-                        <div className="mb-8">
-                            <span className="text-[11px] font-black uppercase tracking-widest text-[#64748b] mb-4 block pl-2">EARLIER</span>
-                            <div className="flex flex-col gap-0">
-                                {earlierItems.map(item => <NotificationCard key={item.id} data={item} />)}
+                    ) : notifications.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center py-20 bg-white/5 rounded-3xl border border-white/5">
+                            <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-[#64748b] mb-4">
+                                <BellOff size={32} />
                             </div>
+                            <h3 className="text-white font-bold text-lg mb-1">No notifications yet</h3>
+                            <p className="text-[#64748b] text-sm text-center max-w-[280px]">
+                                When people interact with you or your groups, we'll let you know here.
+                            </p>
                         </div>
-                    )}
+                    ) : (
+                        <>
+                            {/* TODAY Section */}
+                            {todayItems.length > 0 && (
+                                <div className="mb-10">
+                                    <span className="text-[11px] font-black uppercase tracking-widest text-[#64748b] mb-4 block pl-2">TODAY</span>
+                                    <div className="flex flex-col gap-0 text-white">
+                                        {todayItems.map(item => <NotificationCard key={item._id} data={item} />)}
+                                    </div>
+                                </div>
+                            )}
 
-                    {/* Load More */}
-                    <div className="flex justify-center mt-8">
-                        <button className="text-[13px] font-bold text-[#64748b] hover:text-white transition-colors flex items-center gap-2 p-2 rounded-xl group">
-                            <span>Load older notifications</span>
-                            <ChevronDown size={14} className="group-hover:translate-y-0.5 transition-transform" />
-                        </button>
-                    </div>
+                            {/* EARLIER Section */}
+                            {earlierItems.length > 0 && (
+                                <div className="mb-8">
+                                    <span className="text-[11px] font-black uppercase tracking-widest text-[#64748b] mb-4 block pl-2">EARLIER</span>
+                                    <div className="flex flex-col gap-0 text-white">
+                                        {earlierItems.map(item => <NotificationCard key={item._id} data={item} />)}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Load More (Visual only for now) */}
+                            {notifications.length >= 20 && (
+                                <div className="flex justify-center mt-8">
+                                    <button className="text-[13px] font-bold text-[#64748b] hover:text-white transition-colors flex items-center gap-2 p-2 rounded-xl group">
+                                        <span>Load older notifications</span>
+                                        <ChevronDown size={14} className="group-hover:translate-y-0.5 transition-transform" />
+                                    </button>
+                                </div>
+                            )}
+                        </>
+                    )}
                 </div>
 
             </main>

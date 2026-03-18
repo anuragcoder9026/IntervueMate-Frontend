@@ -286,6 +286,18 @@ export const authSlice = createSlice({
                 if (state.user) {
                     state.user.blockedUsers = (state.user.blockedUsers || []).filter(id => (id._id || id).toString() !== action.payload.userId);
                 }
+            })
+            // Toggle Save Post (Sync from postSlice)
+            .addCase('post/toggleSave/fulfilled', (state, action) => {
+                if (state.user) {
+                    if (!state.user.savedPosts) state.user.savedPosts = [];
+                    const { postId, isSaved } = action.payload;
+                    if (isSaved) {
+                        state.user.savedPosts.push(postId);
+                    } else {
+                        state.user.savedPosts = state.user.savedPosts.filter(id => (id._id || id).toString() !== postId.toString());
+                    }
+                }
             });
     },
 });

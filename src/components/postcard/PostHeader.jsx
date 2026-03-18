@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { CheckCircle, Clock, Globe, Users, MoreHorizontal, Bookmark, Link2, UserPlus, EyeOff, Flag, Trash2, UserMinus, Plus, Check, ShieldBan } from 'lucide-react';
+import { CheckCircle, Clock, Globe, Users, MoreHorizontal, Bookmark, Link2, UserPlus, EyeOff, Flag, Trash2, UserMinus, Plus, Check, ShieldBan, Loader2 } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { followUser, unfollowUser, blockUser, unblockUser } from '../../store/authSlice';
 import { useSocket } from '../../context/SocketContext';
 
-const PostHeader = ({ author, role, time, audience, onDelete, isOwner, postId }) => {
+const PostHeader = ({ author, role, time, audience, onDelete, isOwner, postId, isSaved, onSave, isSaving }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { user } = useSelector((state) => state.auth);
@@ -171,11 +171,29 @@ const PostHeader = ({ author, role, time, audience, onDelete, isOwner, postId })
                         {/* Dropdown Menu */}
                         {showDropdown && (
                             <div className="absolute top-full right-0 mt-1 w-60 bg-bg-secondary border border-border-primary rounded-xl shadow-xl z-50 overflow-hidden py-1 animation-scale-in origin-top-right">
-                                <button className="w-full flex items-center gap-3 px-3 py-2 text-[13px] text-text-primary hover:bg-bg-tertiary transition-colors text-left">
-                                    <Bookmark size={16} className="text-text-secondary" />
+                                <button 
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        if (isSaving) return;
+                                        onSave();
+                                        setShowDropdown(false);
+                                    }}
+                                    disabled={isSaving}
+                                    className={`w-full flex items-center gap-3 px-3 py-2 text-[13px] text-text-primary hover:bg-bg-tertiary transition-colors text-left ${isSaving ? 'opacity-70 cursor-not-allowed' : ''}`}
+                                >
+                                    {isSaving ? (
+                                        <Loader2 size={16} className="animate-spin text-amber-500" />
+                                    ) : (
+                                        <Bookmark size={16} fill={isSaved ? "currentColor" : "none"} className={isSaved ? "text-amber-500" : "text-text-secondary"} />
+                                    )}
                                     <div className="flex flex-col">
-                                        <span className="font-semibold">Save</span>
-                                        <span className="text-[10px] text-text-secondary">Save for later</span>
+                                        <span className={`font-semibold ${isSaved ? "text-amber-500" : ""}`}>
+                                            {isSaving ? (isSaved ? 'Removing...' : 'Saving...') : (isSaved ? 'Saved' : 'Save')}
+                                        </span>
+                                        <span className="text-[10px] text-text-secondary">
+                                            {isSaving ? 'Processing...' : (isSaved ? 'Remove from saved items' : 'Save for later')}
+                                        </span>
                                     </div>
                                 </button>
                                 <button

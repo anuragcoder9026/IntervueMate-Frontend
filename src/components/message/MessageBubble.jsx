@@ -47,7 +47,7 @@ const AudioPlayer = ({ url, mine }) => {
     };
 
     return (
-        <div className="flex items-center gap-3 bg-black/20 p-2.5 py-2 rounded-xl border border-white/5 min-w-[200px] sm:min-w-[240px]">
+        <div className="flex items-center gap-3 bg-black/20 p-2.5 py-2 rounded-xl border border-white/5 w-full min-w-0 max-w-[280px]">
             <audio
                 ref={audioRef}
                 src={url}
@@ -122,7 +122,7 @@ const ImageGrid = ({ images, setGalleryData }) => {
     const displayImages = images.slice(0, 4);
 
     return (
-        <div className={`grid gap-1 rounded-lg overflow-hidden w-full max-w-[400px] ${gridClass}`}>
+        <div className={`grid gap-1 rounded-lg overflow-hidden w-full max-w-full sm:max-w-[400px] ${gridClass}`}>
             {displayImages.map((img, idx) => (
                 <div
                     key={idx}
@@ -211,11 +211,11 @@ const MessageBubble = ({
     }
 
     return (
-        <div className={`flex ${mine ? 'justify-end' : 'justify-start'} ${isConsecutive ? 'mt-[2px]' : 'mt-3'}`}>
-            <div className={`relative max-w-[85%] sm:max-w-[65%] lg:max-w-[55%] ${mine
+        <div className={`flex ${mine ? 'justify-end' : 'justify-start'} ${isConsecutive ? 'mt-[2px]' : 'mt-3'} w-full`}>
+            <div className={`relative max-w-[85%] sm:max-w-[70%] lg:max-w-[60%] min-w-[60px] ${mine
                 ? 'bg-[#1a3a5c] rounded-lg rounded-tr-none'
                 : 'bg-[#1C2436] rounded-lg rounded-tl-none'
-                } ${!isConsecutive ? '' : mine ? 'rounded-tr-lg' : 'rounded-tl-lg'} shadow-sm`}>
+                } ${!isConsecutive ? '' : mine ? 'rounded-tr-lg' : 'rounded-tl-lg'} shadow-sm overflow-hidden`}>
                 {!isConsecutive && (
                     <div className={`absolute top-0 w-3 h-3 ${mine ? '-right-[6px] bg-[#1a3a5c]' : '-left-[6px] bg-[#1C2436]'}`} style={{
                         clipPath: mine ? 'polygon(0 0, 0% 100%, 100% 0)' : 'polygon(100% 0, 0 0, 100% 100%)',
@@ -228,7 +228,7 @@ const MessageBubble = ({
 
                             {otherMedia.map((mediaItem, mIdx) => {
                                 if (mediaItem.type === 'file') return (
-                                    <div key={mIdx} className="mb-1 w-[200px] sm:w-[250px] flex gap-3 bg-black/20 p-3 rounded-lg border border-white/5 items-center">
+                                    <div key={mIdx} className="mb-1 w-full max-w-[250px] flex gap-3 bg-black/20 p-3 rounded-lg border border-white/5 items-center">
                                         <div className="bg-[#1C2436] p-2 rounded-lg text-accent-blue shrink-0">
                                             <FileText size={24} />
                                         </div>
@@ -271,7 +271,7 @@ const MessageBubble = ({
                         </div>
                     )}
                     {msg.text && (
-                        <p className="text-[13.5px] text-gray-100 leading-[1.45] whitespace-pre-wrap break-words pb-1">
+                        <p className="text-[13.5px] text-gray-100 leading-[1.45] whitespace-pre-wrap [word-break:break-word] [overflow-wrap:anywhere] pb-1">
                             {(() => {
                                 const urlRegex = /(https?:\/\/[^\s]+)/g;
                                 const parts = msg.text.split(urlRegex);
@@ -293,10 +293,9 @@ const MessageBubble = ({
                                     return part;
                                 });
                             })()}
-                            <span className="inline-block w-[70px]" />
                         </p>
                     )}
-                    <div className="flex items-center gap-1 float-right -mt-4 relative z-10">
+                    <div className="flex items-center justify-end gap-1 mt-0.5 ml-auto">
                         <span className="text-[10px] text-text-secondary/70">{formatMessageTime(msg.createdAt)}</span>
                         {mine && <MessageStatus status={status} />}
                     </div>

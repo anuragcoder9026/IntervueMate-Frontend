@@ -47,7 +47,7 @@ const SectionHeader = ({ title }) => (
     </h3>
 );
 
-const MessageSettings = () => {
+const MessageSettings = ({ isMobileChatOpen }) => {
     const navigate = useNavigate();
     const [settings, setSettings] = useState({
         readReceipts: true,
@@ -64,7 +64,7 @@ const MessageSettings = () => {
     };
 
     return (
-        <div className="flex-1 flex flex-col bg-[#0d1220] overflow-hidden">
+        <div className={`flex-1 flex-col bg-[#0d1220] overflow-hidden ${isMobileChatOpen ? 'flex' : 'hidden md:flex'}`}>
             {/* Header */}
             <div className="px-6 py-4 border-b border-[#1E293B]/60 bg-[#111827]/50 backdrop-blur-md flex items-center gap-4">
                 <button

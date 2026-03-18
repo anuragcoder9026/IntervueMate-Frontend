@@ -4,6 +4,7 @@ import groupReducer from './groupSlice';
 import authReducer from './authSlice';
 import postReducer from './postSlice';
 import quizReducer from './quizSlice';
+import notificationReducer from './notificationSlice';
 
 export const store = configureStore({
     reducer: {
@@ -12,5 +13,6 @@ export const store = configureStore({
         auth: authReducer,
         post: postReducer,
         quiz: quizReducer,
+        notifications: notificationReducer,
     },
 });

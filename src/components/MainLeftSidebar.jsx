@@ -50,11 +50,11 @@ const MainLeftSidebar = () => {
                     <div className="w-full space-y-4">
                         <div className="flex justify-between items-center text-xs">
                             <span className="text-text-secondary font-medium">Profile Views</span>
-                            <span className="text-accent-blue font-bold">142</span>
+                            <span className="text-accent-blue font-bold">{user?.profileViews || 0}</span>
                         </div>
                         <div className="flex justify-between items-center text-xs">
                             <span className="text-text-secondary font-medium">Post Impressions</span>
-                            <span className="text-accent-blue font-bold">2.4k</span>
+                            <span className="text-accent-blue font-bold">{user?.totalPostLikes || 0}</span>
                         </div>
                     </div>
                 </div>
@@ -74,9 +74,13 @@ const MainLeftSidebar = () => {
                         onClick={() => navigate('/friends')}
                     />
                 </div>
-                <div className="flex lg:flex-col gap-1 pt-0 lg:pt-3 shrink-0">
-                    <NavItem icon={<Bookmark size={18} />} label="Saved Items" />
-                    <NavItem icon={<Settings size={18} />} label="Premium Access" color="text-amber-500" />
+                <div className="flex lg:flex-col gap-1 pt-0 lg:pt-3 shrink-0 mb-4">
+                    <NavItem 
+                        icon={<Bookmark size={18} className="text-yellow-500" />} 
+                        label="Saved Items" 
+                        active={location.pathname === '/saved'}
+                        onClick={() => navigate('/saved')}
+                    />
                 </div>
             </div>
 

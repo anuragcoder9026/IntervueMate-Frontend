@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { io } from 'socket.io-client';
+import { addNotification } from '../store/notificationSlice';
 
 const SocketContext = createContext(null);
 
@@ -9,6 +10,7 @@ export const useSocket = () => useContext(SocketContext);
 const SOCKET_URL = `${import.meta.env.VITE_BACKEND_URI}`;
 
 export const SocketProvider = ({ children }) => {
+    const dispatch = useDispatch();
     const { user } = useSelector((state) => state.auth);
     const [socket, setSocket] = useState(null);
     const [onlineUsers, setOnlineUsers] = useState(new Set());
@@ -39,6 +41,11 @@ export const SocketProvider = ({ children }) => {
                     updated.delete(userId);
                     return updated;
                 });
+            });
+
+            newSocket.on('new_notification', (notification) => {
+                console.log('🔔 New notification received:', notification);
+                dispatch(addNotification(notification));
             });
 
             newSocket.on('connect_error', (err) => {

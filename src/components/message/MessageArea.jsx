@@ -53,7 +53,7 @@ const MessageArea = ({
     };
 
     return (
-        <div className="flex-1 relative flex flex-col overflow-hidden min-h-0" style={chatBgStyle}>
+        <div className="flex-1 relative flex flex-col overflow-hidden min-h-0 w-full min-w-0" style={chatBgStyle}>
             <div
                 ref={chatContainerRef}
                 onScroll={handleScroll}

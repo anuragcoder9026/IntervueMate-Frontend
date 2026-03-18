@@ -670,10 +670,11 @@ const MessagesPage = () => {
                 />
 
                 {isSettingsPage ? (
-                    <MessageSettings />
+                    <MessageSettings isMobileChatOpen={isMobileChatOpen} />
                 ) : (
                     <ChatWindow
                         user={user}
+                        isMobileChatOpen={isMobileChatOpen}
                         activeConversation={activeConversation}
                         messages={messages}
                         loadingMessages={loadingMessages}

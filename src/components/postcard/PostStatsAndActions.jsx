@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, Share2, MessageSquare, Repeat, PenLine, MessageCircle, Send, Link } from 'lucide-react';
+import { Heart, Share2, MessageSquare, Repeat, PenLine, MessageCircle, Send, Link, Bookmark, Loader2 } from 'lucide-react';
 import LikesModal from './LikesModal';
 
 const PostStatsAndActions = ({
     likesCount, isLiked, onLike,
     commentsCount, showComments, setShowComments,
     onRepostClick, onInstantRepost, isSubmittingRepost,
-    postId, shareCount = 0
+    postId, shareCount = 0, isSaved, onSave, isSaving
 }) => {
     const navigate = useNavigate();
     const [isRepostMenuOpen, setIsRepostMenuOpen] = useState(false);
@@ -150,7 +150,7 @@ const PostStatsAndActions = ({
                         }}
                         className={`w-full flex items-center justify-center gap-1.5 sm:gap-2 py-2 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-bold transition-all active:scale-95 group/btn min-w-[70px] ${isShareMenuOpen ? 'text-emerald-500 bg-emerald-500/5' : 'text-text-secondary hover:text-white hover:bg-bg-tertiary'}`}
                     >
-                        <Share2 size={16} className={`${isShareMenuOpen ? 'text-emerald-500' : 'group-hover/btn:text-emerald-500'} transition-colors shrink-0`} />
+                        <Share2 size={16} className={`${isShareMenuOpen ? 'text-emerald-500' : 'group-hover:btn:text-emerald-500'} transition-colors shrink-0`} />
                         <span className="hidden sm:inline">Share</span>
                     </button>
 
@@ -175,7 +175,24 @@ const PostStatsAndActions = ({
                         </div>
                     )}
                 </div>
+                <button
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onSave();
+                    }}
+                    disabled={isSaving}
+                    className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-2 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-bold transition-all active:scale-95 group/btn min-w-[60px] ${isSaved ? 'text-amber-500 bg-amber-500/5' : 'text-text-secondary hover:text-white hover:bg-bg-tertiary'} ${isSaving ? 'opacity-70 cursor-not-allowed' : ''}`}
+                >
+                    {isSaving ? (
+                        <Loader2 size={16} className="animate-spin text-amber-500" />
+                    ) : (
+                        <Bookmark size={16} fill={isSaved ? "currentColor" : "none"} className={`${isSaved ? 'text-amber-500' : 'group-hover:btn:text-amber-500'} transition-colors shrink-0`} />
+                    )}
+                    <span className="hidden sm:inline">{isSaved ? 'Saved' : 'Save'}</span>
+                </button>
             </div>
+
 
             <LikesModal
                 isOpen={isLikesModalOpen}

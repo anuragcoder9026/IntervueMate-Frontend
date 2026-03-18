@@ -344,15 +344,6 @@ const GroupFeedPage = () => {
                             <div className="flex gap-3 sm:gap-6 overflow-x-auto no-scrollbar pb-px">
                                 <button className="pb-3 border-b-2 border-accent-blue text-white text-[11px] sm:text-sm font-bold px-1 sm:px-2 shrink-0">All Posts</button>
                             </div>
-                            <div className="pb-3 text-[10px] sm:text-xs font-black uppercase text-text-secondary flex items-center gap-1.5 shrink-0 ml-4 whitespace-nowrap">
-                                <span className="hidden xs:inline">SORT BY:</span>
-                                <span className="text-white normal-case font-bold cursor-pointer hover:text-accent-blue flex items-center gap-1 group">
-                                    Recent
-                                    <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 transition-transform group-hover:translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path>
-                                    </svg>
-                                </span>
-                            </div>
                         </div>
 
                         {/* Feed Posts */}

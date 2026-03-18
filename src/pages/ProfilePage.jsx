@@ -34,6 +34,8 @@ const ProfilePage = () => {
     const handle = userNameAndId?.split('-').pop();
     const isOwnProfile = !userNameAndId || handle === currentUser?.userId;
 
+    const { isSuccess, message } = useSelector((state) => state.post);
+
     const navigate = useNavigate();
 
     // Redirection logic for self-profile
@@ -63,6 +65,14 @@ const ProfilePage = () => {
             fetchPublicUser();
         }
     }, [handle, isOwnProfile, dispatch]);
+
+    // Reset post state on mount/unmount and handle toasts
+    React.useEffect(() => {
+        if (isSuccess) {
+            if (message) toast.success(message);
+            dispatch({ type: 'post/reset' });
+        }
+    }, [isSuccess, message, dispatch]);
 
     const displayUser = isOwnProfile ? currentUser : publicUser;
 
@@ -112,16 +122,16 @@ const ProfilePage = () => {
                         />
 
                         {/* Tab Content */}
-                        {activeTab === 'About' && <AboutTab />}
-                        {activeTab === 'Experience' && <ExperienceTab />}
-                        {activeTab === 'Posts' && <PostsTab />}
-                        {activeTab === 'Achievements' && <AchievementsTab />}
+                        {activeTab === 'About' && <AboutTab user={displayUser} isOwnProfile={isOwnProfile} />}
+                        {activeTab === 'Experience' && <ExperienceTab user={displayUser} isOwnProfile={isOwnProfile} />}
+                        {activeTab === 'Posts' && <PostsTab user={displayUser} />}
+                        {activeTab === 'Achievements' && <AchievementsTab user={displayUser} isOwnProfile={isOwnProfile} />}
                         {activeTab === 'Groups' && <GroupsTab user={displayUser} />}
 
                     </div>
 
                     {/* Right Sidebar */}
-                    <ProfileRightSidebar />
+                    <ProfileRightSidebar user={displayUser} isOwnProfile={isOwnProfile} />
                 </div>
             </main>
 

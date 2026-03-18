@@ -6,6 +6,7 @@ import { updateProfile, reset, followUser, unfollowUser, blockUser, unblockUser 
 import { toast } from 'react-toastify';
 import EditProfileCardModal from './EditProfileCardModal';
 import api from '../../utils/api';
+import FollowModal from './FollowModal';
 
 const ProfileHeader = ({ displayUser, isOwnProfile }) => {
     const navigate = useNavigate();
@@ -20,6 +21,7 @@ const ProfileHeader = ({ displayUser, isOwnProfile }) => {
     const [showOptionsDropdown, setShowOptionsDropdown] = useState(false);
     const [blockConfirmOpen, setBlockConfirmOpen] = useState(false);
     const [messageFollowModalOpen, setMessageFollowModalOpen] = useState(false);
+    const [followModal, setFollowModal] = useState({ isOpen: false, title: '', users: [] });
     const dropdownRef = useRef(null);
 
     useEffect(() => {
@@ -272,11 +274,36 @@ const ProfileHeader = ({ displayUser, isOwnProfile }) => {
                     </div>
 
                     <div className="flex items-center gap-4 text-xs font-bold text-text-secondary">
-                        <span className="hover:text-white cursor-pointer transition-colors"><span className="text-accent-blue">{displayUser?.following?.length || 0}</span> Following</span>
-                        <span className="hover:text-white cursor-pointer transition-colors"><span className="text-accent-blue">{displayUser?.followers?.length || 0}</span> Followers</span>
+                        <span 
+                            onClick={() => setFollowModal({ 
+                                isOpen: true, 
+                                title: 'Following', 
+                                users: displayUser?.following || [] 
+                            })}
+                            className="hover:text-white cursor-pointer transition-colors"
+                        >
+                            <span className="text-accent-blue">{displayUser?.following?.length || 0}</span> Following
+                        </span>
+                        <span 
+                            onClick={() => setFollowModal({ 
+                                isOpen: true, 
+                                title: 'Followers', 
+                                users: displayUser?.followers || [] 
+                            })}
+                            className="hover:text-white cursor-pointer transition-colors"
+                        >
+                            <span className="text-accent-blue">{displayUser?.followers?.length || 0}</span> Followers
+                        </span>
                     </div>
                 </div>
             </div>
+
+            <FollowModal 
+                isOpen={followModal.isOpen}
+                onClose={() => setFollowModal({ ...followModal, isOpen: false })}
+                title={followModal.title}
+                users={followModal.users}
+            />
 
             {isOwnProfile && (
                 <EditProfileCardModal

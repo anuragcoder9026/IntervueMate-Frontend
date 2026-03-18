@@ -34,6 +34,7 @@ import GroupResourcesPage from './pages/GroupResourcesPage';
 import LeaderboardPage from './pages/LeaderboardPage';
 import NoGroupsPage from './pages/NoGroupsPage';
 import SinglePostPage from './pages/SinglePostPage';
+import SavedPostsPage from './pages/SavedPostsPage';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -108,6 +109,7 @@ function App() {
           <Route path="/friends" element={<ProtectedRoute><FriendsPage /></ProtectedRoute>} />
           <Route path="/joined-groups" element={<ProtectedRoute><JoinedGroupsPage /></ProtectedRoute>} />
           <Route path="/no-groups" element={<ProtectedRoute><NoGroupsPage /></ProtectedRoute>} />
+          <Route path="/saved" element={<ProtectedRoute><SavedPostsPage /></ProtectedRoute>} />
 
           {/* Catch all - Redirect to Landing */}
           <Route path="*" element={<Navigate to="/" replace />} />

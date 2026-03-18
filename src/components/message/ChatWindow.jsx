@@ -39,11 +39,12 @@ const ChatWindow = ({
     downloadingFiles,
     downloadedFiles,
     isBlocked,
-    startCall
+    startCall,
+    isMobileChatOpen
 }) => {
     if (!activeConversation) {
         return (
-            <div className="flex-1 flex flex-col items-center justify-center p-4 bg-[#0d1220]" style={chatBgStyle}>
+            <div className={`flex-1 flex-col items-center justify-center p-4 bg-[#0d1220] ${isMobileChatOpen ? 'flex' : 'hidden md:flex'}`} style={chatBgStyle}>
                 <MessageSquare size={64} className="text-text-secondary/20 mb-4" />
                 <h3 className="text-xl font-semibold text-text-secondary/50 mb-1">InterviewMate Messenger</h3>
                 <p className="text-text-secondary/40 text-sm">Select a chat to start messaging</p>
@@ -52,7 +53,7 @@ const ChatWindow = ({
     }
 
     return (
-        <div className={`flex-1 flex flex-col h-full bg-[#0d1220]`}>
+        <div className={`flex-1 flex flex-col h-full bg-[#0d1220] w-full min-w-0 ${isMobileChatOpen ? 'flex' : 'hidden md:flex'}`}>
             <ChatHeader
                 otherParticipant={otherParticipant}
                 isOtherOnline={isOtherOnline}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { likePost, deletePost, addComment, likeComment, addReply, getPostComments, repostPost, deleteRepost } from '../store/postSlice';
+import { likePost, deletePost, addComment, likeComment, addReply, getPostComments, repostPost, deleteRepost, toggleSavePost } from '../store/postSlice';
 import { joinGroup } from '../store/groupSlice';
 import RepostModal from './postcard/RepostModal';
 import { Repeat, Users, UserPlus, FileText, CheckCircle, MoreHorizontal, Trash2 } from 'lucide-react';
@@ -15,7 +15,7 @@ import { formatDistanceToNow } from 'date-fns';
 const PostCard = ({
     _id, author, createdAt, content, tags, image, images: initialImages,
     files, links, likes, comments = [], commentLoading, audience = 'Anyone', isSinglePostView = false,
-    groupId, isRepost, repostUser, repostContent, originalPostId, shareCount = 0
+    groupId, isRepost, repostUser, repostContent, originalPostId, shareCount = 0, isSaved: initialIsSaved
 }) => {
     const dispatch = useDispatch();
     const { user } = useSelector((state) => state.auth);
@@ -110,9 +110,25 @@ const PostCard = ({
             .replace('less than a minute ago', 'Just now')
             .replace('about ', '')
         : 'Just now';
+    
+    const [isSaving, setIsSaving] = useState(false);
+
+    // Check if post is saved by user
+    const isSaved = initialIsSaved || (user?.savedPosts?.some(
+        sId => (sId._id || sId).toString() === (originalPostId || _id).toString()
+    ));
 
     const handleLike = () => {
         dispatch(likePost(originalPostId || _id));
+    };
+
+    const handleSave = async () => {
+        setIsSaving(true);
+        try {
+            await dispatch(toggleSavePost(originalPostId || _id)).unwrap();
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     const handleDelete = () => {
@@ -242,6 +258,9 @@ const PostCard = ({
                             onDelete={handleDelete}
                             isOwner={user?._id === (author?._id || author)}
                             postId={originalPostId || _id}
+                            isSaved={isSaved}
+                            onSave={handleSave}
+                            isSaving={isSaving}
                         />
                         <PostBody
                             displayText={displayText}
@@ -296,6 +315,9 @@ const PostCard = ({
                         onDelete={handleDelete}
                         isOwner={user?._id === (author?._id || author)}
                         postId={originalPostId || _id}
+                        isSaved={isSaved}
+                        onSave={handleSave}
+                        isSaving={isSaving}
                     />
 
                     <PostBody
@@ -328,6 +350,9 @@ const PostCard = ({
                         onInstantRepost={() => handleRepost('')}
                         isSubmittingRepost={isSubmittingRepost}
                         postId={originalPostId || _id}
+                        isSaved={isSaved}
+                        onSave={handleSave}
+                        isSaving={isSaving}
                     />
 
                     <PostComments
